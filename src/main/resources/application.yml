@@ -1,5 +1,18 @@
 # DataSource Config
+#spring: mysql 配置
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/vueblog?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+#    username: root
+#    password: admin
 
+# oracle 数据源配置
+spring:
+  datasource:
+    druid:
+      url: jdbc:oracle:thin:@localhost:1521:helowin
+      username: dev
+      password: dev
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**Mapper.xml
