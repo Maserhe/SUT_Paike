@@ -13,4 +13,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface WeixinUserService extends IService<WeixinUser> {
 
+
+     WeixinUser getUserInfoByAccount(String userAccount);
 }

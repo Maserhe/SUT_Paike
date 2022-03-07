@@ -1,18 +1,13 @@
 # DataSource Config
-#spring: mysql 配置
-#  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://localhost:3306/vueblog?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=Asia/Shanghai
-#    username: root
-#    password: admin
-
-# oracle 数据源配置
 spring:
   datasource:
     druid:
       url: jdbc:oracle:thin:@localhost:1521:helowin
       username: dev
       password: dev
+  redis:
+    host: localhost
+    port: 6379
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**Mapper.xml
@@ -31,10 +26,12 @@ maserhe:
     header: token
 
 
+jwt:
+  #  header: Authorization
+  token:
+    secret: mySecret
+    #    7天
+    #    expiration: 604800
 
-## 文件存储所需参数
-# 所有通过 REST APIs 上传的文件都将存储在此目录下
-file:
-  upload-dir: uploads
-server:
-  port: 8080
+    #    一天
+    expiration: 86400

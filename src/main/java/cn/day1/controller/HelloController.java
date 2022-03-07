@@ -1,5 +1,6 @@
 package cn.day1.controller;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,9 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloController {
 
     @RequestMapping("/hello")
+    @RequiresAuthentication
     public String hello() {
 
+        System.out.println("hahhah");
         return "hahahahah";
+
     }
 
 }

@@ -1,4 +1,4 @@
-package cn.day1.controller;
+package cn.day1.controller.BaseController;
 
 
 import cn.day1.entity.WeixinUser;
@@ -37,5 +37,8 @@ public class WeixinUserController {
         WeixinUser user = weixinUserService.getOne(new QueryWrapper<WeixinUser>().eq("USERACCOUNT", username));
         return JSONUtil.toJsonStr(user);
     }
+
+
+
 
 }

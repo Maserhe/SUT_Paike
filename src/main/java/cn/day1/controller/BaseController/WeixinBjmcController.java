@@ -1,4 +1,4 @@
-package cn.day1.controller;
+package cn.day1.controller.BaseController;
 
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2022-03-06
  */
 @RestController
-@RequestMapping("/weixin-jskb")
-public class WeixinJskbController {
+@RequestMapping("/weixin-bjmc")
+public class WeixinBjmcController {
 
 }

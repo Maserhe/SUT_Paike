@@ -1,4 +1,4 @@
-package cn.day1.controller;
+package cn.day1.controller.BaseController;
 
 
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -48,7 +48,7 @@ public class WeixinUser implements Serializable {
     private String useraccounttype;
 
     /**
-     * 是否启用该用户1启用0禁用
+     * 是否启用该用户1 启用 0 禁用
      */
     @TableField("USERENABLE")
     private String userenable;
