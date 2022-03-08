@@ -1,25 +1,32 @@
-package cn.day1.common;
+package cn.day1.common.constant;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.io.Serializable;
+import lombok.NoArgsConstructor;
 
 /**
  * Description:
- * 统一返回 成功是0， 失败是-1
+ *
  * @author maserhe
- * @date 2022/3/6 1:23 下午
+ * @date 2022/3/8 9:19 上午
  **/
 @Data
-public class Result implements Serializable {
+@AllArgsConstructor
+@NoArgsConstructor
+public class Result {
+    /**
+     * HTTP状态码
+     */
+    private Integer code;
 
     /**
-     *   200是正常，非200表示异常
+     * 返回信息
      */
-    private int code;
-
     private String msg;
 
+    /**
+     * 返回的数据
+     */
     private Object data;
 
 

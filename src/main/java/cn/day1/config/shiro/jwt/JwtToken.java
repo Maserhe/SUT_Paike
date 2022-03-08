@@ -1,4 +1,4 @@
-package cn.day1.shiro.jwt;
+package cn.day1.config.shiro.jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,19 +6,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.shiro.authc.AuthenticationToken;
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class JwtToken implements AuthenticationToken {
-
-    private String principal;
-
+    /**
+     * Token
+     */
     private String token;
 
+    public JwtToken(String token) {
+        this.token = token;
+    }
+
     @Override
-    public String getPrincipal() {
-        return principal;
+    public Object getPrincipal() {
+        return token;
     }
 
     @Override

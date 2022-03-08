@@ -17,19 +17,11 @@ shiro-redis:
   redis-manager:
     host: 127.0.0.1:6379
 
-maserhe:
-  jwt:
-    # 加密秘钥
-    secret: f4e2e52034348f86b67cde581c0f9eb5
-    # token有效时长，7天，单位秒
-    expire: 604800
-    header: token
-
 
 jwt:
   #  header: Authorization
-  token:
-    secret: mySecret
+  token:         # 加密秘钥
+    secret: f4e2e52034348f86b67cde581c0f9eb5
     #    7天
     #    expiration: 604800
 

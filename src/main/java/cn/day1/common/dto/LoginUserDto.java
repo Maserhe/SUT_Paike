@@ -1,4 +1,4 @@
-package cn.day1.shiro;
+package cn.day1.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LoginUser {
+public class LoginUserDto {
 
     private String userAccount;
     private String password;

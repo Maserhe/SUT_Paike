@@ -1,6 +1,5 @@
-package cn.day1.common;
+package cn.day1.common.vo;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -12,10 +11,9 @@ import java.io.Serializable;
  * @date 2022/3/7 1:04 下午
  **/
 @Data
-public class AccountProfile implements Serializable {
+public class AccountVo implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
 
     /**
      * 帐号
