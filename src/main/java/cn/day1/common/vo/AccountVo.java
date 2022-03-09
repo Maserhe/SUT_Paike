@@ -15,24 +15,13 @@ public class AccountVo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 帐号
-     */
-    private String useraccount;
+    private String accessToken;
 
     /**
-     * 真实姓名
+     *  过期时间
      */
-    private String userrealname;
+    private int expires;
 
-    /**
-     * 帐号类型 0 系统管理，1 教职工， 2 学生
-     */
-    private String useraccounttype;
-
-    /**
-     * 是否启用该用户1 启用 0 禁用
-     */
-    private String userenable;
+    private String name;
 
 }
