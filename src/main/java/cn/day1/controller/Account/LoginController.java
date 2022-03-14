@@ -68,10 +68,7 @@ public class LoginController {
         response.setHeader("Access-Control-Expose-Headers", "Authorization");
 
         AccountVo vo = new AccountVo();
-        vo.setExpires(Integer.parseInt(accessTokenExpireTime));
-        vo.setAccessToken(token);
-        vo.setName(user.getUseraccount());
-
+        BeanUtils.copyProperties(user, vo);
         return Result.succ("登陆成功！", vo);
     }
 

@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(ShiroException.class)
     public Result handle401(ShiroException e) {
-        return new Result(HttpStatus.UNAUTHORIZED.value(), "无权访问(Unauthorized):" + e.getMessage(), null);
+        return Result.fail(8888, "无权访问(Unauthorized):" + e.getMessage(), null);
     }
 
     /**
@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthorizedException.class)
     public Result handle401(UnauthorizedException e) {
-        return new Result(HttpStatus.UNAUTHORIZED.value(), "无权访问(Unauthorized):当前Subject没有此请求所需权限(" + e.getMessage() + ")", null);
+        return Result.fail(HttpStatus.UNAUTHORIZED.value(), "无权访问(Unauthorized):当前Subject没有此请求所需权限(" + e.getMessage() + ")", null);
     }
 
     /**
@@ -62,7 +62,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthenticatedException.class)
     public Result handle401(UnauthenticatedException e) {
-        return new Result(HttpStatus.UNAUTHORIZED.value(), "无权访问(Unauthorized):当前Subject是匿名Subject，请先登录(This subject is anonymous.)", null);
+        return Result.fail(8888, "无权访问(Unauthorized):当前Subject是匿名Subject，请先登录", null);
     }
 
     /**
@@ -72,7 +72,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(CustomUnauthorizedException.class)
     public Result handle401(CustomUnauthorizedException e) {
-        return new Result(HttpStatus.UNAUTHORIZED.value(), "无权访问(Unauthorized):" + e.getMessage(), null);
+        return Result.fail(8888, "无权访问(Unauthorized):" + e.getMessage(), null);
     }
 
     /**
@@ -84,7 +84,7 @@ public class GlobalExceptionHandler {
     public Result validException(BindException e) {
         List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
         Map<String, Object> result = this.getValidError(fieldErrors);
-        return new Result(HttpStatus.BAD_REQUEST.value(), result.get("errorMsg").toString(), result.get("errorList"));
+        return Result.fail(HttpStatus.BAD_REQUEST.value(), result.get("errorMsg").toString(), result.get("errorList"));
     }
 
     /**
@@ -96,7 +96,7 @@ public class GlobalExceptionHandler {
     public Result validException(MethodArgumentNotValidException e) {
         List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
         Map<String, Object> result = this.getValidError(fieldErrors);
-        return new Result(HttpStatus.BAD_REQUEST.value(), result.get("errorMsg").toString(), result.get("errorList"));
+        return Result.fail(HttpStatus.BAD_REQUEST.value(), result.get("errorMsg").toString(), result.get("errorList"));
     }
 
     /**
@@ -106,7 +106,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CustomException.class)
     public Result handle(CustomException e) {
-        return new Result(HttpStatus.BAD_REQUEST.value(), e.getMessage(), null);
+        return Result.fail(HttpStatus.BAD_REQUEST.value(), e.getMessage(), null);
     }
 
     /**
@@ -116,7 +116,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoHandlerFoundException.class)
     public Result handle(NoHandlerFoundException e) {
-        return new Result(HttpStatus.NOT_FOUND.value(), e.getMessage(), null);
+        return Result.fail(HttpStatus.NOT_FOUND.value(), e.getMessage(), null);
     }
 
     /**
@@ -128,7 +128,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public Result globalException(HttpServletRequest request, Throwable ex) {
-        return new Result(this.getStatus(request).value(), ex.toString() + ": " + ex.getMessage(), null);
+        return Result.fail(this.getStatus(request).value(), ex.toString() + ": " + ex.getMessage(), null);
     }
 
     /**

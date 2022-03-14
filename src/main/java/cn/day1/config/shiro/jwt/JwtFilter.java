@@ -9,6 +9,7 @@ import cn.day1.utils.JwtUtil;
 import cn.day1.utils.common.PropertiesUtil;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
@@ -182,12 +183,12 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         httpServletResponse.setContentType("application/json; charset=utf-8");
         try (PrintWriter out = httpServletResponse.getWriter()) {
 
-            String data = JsonConvertUtil.objectToJson(new Result(HttpStatus.UNAUTHORIZED.value(), "无权访问(Unauthorized):" + msg, null));
+            String data = JsonConvertUtil.objectToJson(new Result(8888, "无权访问(Unauthorized):" + msg, null));
 
             out.append(data);
         } catch (IOException e) {
             logger.error("直接返回Response信息出现IOException异常:{}", e.getMessage());
-            throw new CustomException("直接返回Response信息出现IOException异常:" + e.getMessage());
+            throw new UnauthenticatedException("直接返回Response信息出现IOException异常:" + e.getMessage());
         }
     }
 }

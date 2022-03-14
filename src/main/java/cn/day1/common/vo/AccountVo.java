@@ -1,5 +1,6 @@
 package cn.day1.common.vo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -15,13 +16,27 @@ public class AccountVo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String accessToken;
+    /**
+     * 帐号
+     */
+    private String useraccount;
 
     /**
-     *  过期时间
+     * 真实姓名
      */
-    private int expires;
+    private String userrealname;
 
-    private String name;
+    /**
+     * 帐号类型 0 系统管理，1 教职工， 2 学生
+     */
+    private String useraccounttype;
+
+    /**
+     * 是否启用该用户1 启用 0 禁用
+     */
+    private String userenable;
+
+
+
 
 }

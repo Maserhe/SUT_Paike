@@ -17,10 +17,8 @@ public class HelloController {
     @RequestMapping("/hello")
     @RequiresAuthentication
     public String hello() {
-
         System.out.println("hahhah");
         return "hahahahah";
-
     }
 
     @RequiresRoles("ADMIN")
