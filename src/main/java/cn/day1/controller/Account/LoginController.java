@@ -7,12 +7,10 @@ import cn.day1.entity.WeixinUser;
 import cn.day1.service.WeixinUserService;
 import cn.day1.utils.common.JedisUtil;
 import cn.day1.utils.JwtUtil;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import cn.day1.common.dto.LoginUserDto;
+import com.alibaba.druid.util.Utils;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.Account;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.mgt.SecurityManager;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -43,7 +41,8 @@ public class LoginController {
     public Result login(@Validated @RequestBody LoginUserDto loginUserDto, HttpServletResponse response) throws IOException {
 
         String userAccount = loginUserDto.getUsername();
-        String password = loginUserDto.getPassword();
+        String password = Utils.md5(loginUserDto.getPassword());
+
         // 验证用户名和 密码
         WeixinUser user = userService.getUserInfoByAccount(userAccount);
         if (user == null) {
@@ -51,6 +50,10 @@ public class LoginController {
         }
         if ( ! user.getUserpasswd().equals(password) || ! user.getUseraccount().equals(userAccount)) {
             return Result.fail("账号或者密码错误 ！");
+        }
+
+        if ("0".equals(user.getUserenable())) {
+            return Result.fail("账号被禁用");
         }
 
         // 清除可能存在的Shiro权限信息缓存
