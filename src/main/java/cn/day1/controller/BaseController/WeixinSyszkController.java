@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>
@@ -103,40 +103,61 @@ public class WeixinSyszkController {
     }
 
 
+
     /**
      * 多余
      * @param file
      * @return
      */
     @PostMapping("/addSYSList")
-    public Result addSYS(@RequestParam("file") MultipartFile file){
+    public Result addSYS(@RequestParam("file") MultipartFile file, String YxsId, String YxsMc){
         // 处理上传的文件
         Assert.notNull(file, "上传文件不能为空");
-        boolean flag = true;
+        Assert.notNull(YxsId, "参数错误");
+        Assert.notNull(YxsMc, "参数错误");
+
+        // 1，判断上传的实验室文件中有没有重复的实验室号
+        Set<WeixinSyszk> set = new HashSet<>(1);
         try {
             CsvReader csvReader = new CsvReader(file.getInputStream(), Charset.defaultCharset());
             // 1, 跳过首行
             csvReader.readHeaders();
             // 2, 读取数据
             while (csvReader.readRecord()) {
+                String sysName = csvReader.get(0);
+                String sysNumber = csvReader.get(1);
+                Assert.notNull(sysName, "存在一行,实验室名为空，参数错误");
+                Assert.notNull(sysNumber, "存在一行，实验室门牌号为空，参数错误");
 
-                String classNumber = csvReader.get(0);
-                String username = csvReader.get(1);
-                String name = csvReader.get(2);
-                String password = csvReader.get(3);
-                Assert.notNull(username, "学号为空");
-                Assert.notNull(name, "姓名为空");
-                Assert.notNull(password, "密码为空");
-                Assert.notNull(classNumber, "班号不能为空");
+                WeixinSyszk syszk = new WeixinSyszk();
+                syszk.setSysmc(sysName);
+                syszk.setSysmph(sysNumber);
+                syszk.setYxsh(YxsId);
+                syszk.setYxmc(YxsMc);
+                syszk.setSysh(UUIDUtils.createUUUID());
 
-                // 3, 数据写入
-                // 4, 添加实验室。
+                // 如果实验室存在重复的
+                if (set.contains(syszk)) {
+                    return Result.fail("存在两行的实验室门牌号相同, 请检查");
+                } else {
+                    set.add(syszk);
+                }
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return Result.succ("添加实验室成功", flag);
+        // 插入数据库中
+        // 查找实验室中是否存在重复的实验室门牌号
+        List<WeixinSyszk> list = syszkService.list(new QueryWrapper<WeixinSyszk>().eq("YXSH", YxsId));
+        for (int i = 0; i < list.size(); i++) {
+            if (set.contains(list.get(i))) {
+                return Result.fail("已经存在门牌号为" + list.get(i).getSysmph()+ "的实验室了");
+            }
+        }
+
+        boolean res = syszkService.saveBatch(set);
+        return res? Result.succ("添加成功"): Result.fail("添加失败");
     }
 
 

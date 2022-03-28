@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkpaike_sut"]=self["webpackChunkpaike_sut"]||[]).push([[738],{4738:function(n,t,e){e.r(t),e.d(t,{default:function(){return i}});e(3852);var u=e(4143),a=e(3396);const c=(0,a._)("h1",null,"学生管理",-1);function s(n,t,e,s,r,f){const o=u.Kf;return(0,a.wg)(),(0,a.j4)(o,{class:"account-container"},{default:(0,a.w5)((()=>[c])),_:1})}var r={name:"StudentManage",setup(){}},f=e(89);const o=(0,f.Z)(r,[["render",s]]);var i=o},3852:function(n,t,e){e(1758)}}]);
+//# sourceMappingURL=738.0987dd77.js.map

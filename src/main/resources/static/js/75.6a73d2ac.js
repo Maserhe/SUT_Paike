@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkpaike_sut"]=self["webpackChunkpaike_sut"]||[]).push([[75],{2075:function(n,t,u){u.r(t),u.d(t,{default:function(){return i}});u(3852);var c=u(4143),e=u(3396);const a=(0,e._)("h1",null,"实验室课表",-1);function r(n,t,u,r,s,f){const o=c.Kf;return(0,e.wg)(),(0,e.j4)(o,{class:"account-container"},{default:(0,e.w5)((()=>[a])),_:1})}var s={},f=u(89);const o=(0,f.Z)(s,[["render",r]]);var i=o},3852:function(n,t,u){u(1758)}}]);
+//# sourceMappingURL=75.6a73d2ac.js.map
