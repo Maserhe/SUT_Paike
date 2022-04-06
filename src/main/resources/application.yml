@@ -8,6 +8,7 @@ spring:
   redis:
     host: localhost
     port: 6379
+    password: Maserhe123456..
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**Mapper.xml
@@ -16,6 +17,8 @@ shiro-redis:
   enabled: true
   redis-manager:
     host: 127.0.0.1:6379
+
+
 
 
 jwt:

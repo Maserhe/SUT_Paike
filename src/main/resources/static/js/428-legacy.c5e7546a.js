@@ -1,2 +1,0 @@
-"use strict";(self["webpackChunkpaike_sut"]=self["webpackChunkpaike_sut"]||[]).push([[428],{50428:function(n,u,t){t.r(u),t.d(u,{default:function(){return o}});t(67437);var e=t(4143),r=t(73396),a=(0,r._)("h1",null,"课表查询",-1);function c(n,u,t,c,f,s){var i=e.Kf;return(0,r.wg)(),(0,r.j4)(i,{class:"account-container"},{default:(0,r.w5)((function(){return[a]})),_:1})}var f={},s=t(40089);const i=(0,s.Z)(f,[["render",c]]);var o=i},67437:function(n,u,t){t(11758)}}]);
-//# sourceMappingURL=428-legacy.c5e7546a.js.map

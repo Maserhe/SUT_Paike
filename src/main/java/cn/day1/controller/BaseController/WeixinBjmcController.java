@@ -29,15 +29,41 @@ public class WeixinBjmcController {
     private WeixinBjmcService bjmcService;
 
     /**
-     * 根据专业号 获取班级列表
+     * 根据专业号 获取班级列表 Redis
      * @param ZyId
      * @return
      */
-    @PostMapping("/getBjList")
+    @PostMapping("/getBjListByZyId")
     public Result  getBjListByZyId(String ZyId) {
         Assert.notNull(ZyId, "参数错误");
         List<WeixinBjmc> data = bjmcService.list(new QueryWrapper<WeixinBjmc>().eq("ZPBH", ZyId));
         return Result.succ("获取成功", data);
+    }
+
+    /**
+     * 跟酒专业Id 获取入学年份 Redis
+     * @param ZyId
+     * @return
+     */
+    @PostMapping("/getRxnfList")
+    public Result getBjRxnfByZyId(String ZyId) {
+        Assert.notNull(ZyId, "参数错误");
+        List<String> rxnfListByZyId = bjmcService.getRxnfListByZyId(ZyId);
+        return Result.succ(rxnfListByZyId);
+    }
+
+    /**
+     * 根据专业id 和 入学年份 获取班级列表
+     * @param ZyId
+     * @param Rxnf
+     * @return
+     */
+    @PostMapping("/getBjList")
+    public Result getBjListByRxnfAndZyId(String ZyId, String Rxnf) {
+        Assert.notNull(ZyId, "参数错误");
+        Assert.notNull(Rxnf, "参数错误");
+        List<WeixinBjmc> list = bjmcService.list(new QueryWrapper<WeixinBjmc>().eq("ZPBH", ZyId).eq("RXNF", Rxnf));
+        return Result.succ("获取成功", list);
     }
 
 }

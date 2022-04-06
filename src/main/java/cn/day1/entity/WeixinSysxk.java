@@ -66,22 +66,34 @@ public class WeixinSysxk implements Serializable {
     private String sysh;
 
     /**
-     * 实验室名称
+     * 实验室门牌号
      */
-    @TableField("SYSMC")
-    private String sysmc;
+    @TableField("SYSMPH")
+    private String sysmph;
 
     /**
      * 实验室所在的院系所名称
      */
-    @TableField("YXMC")
-    private String yxmc;
+    @TableField("YXSH")
+    private String yxsh;
 
     /**
      * 排课的备注说明
      */
     @TableField("BZ")
     private String bz;
+
+    /**
+     * 教工id
+     */
+    @TableField("JG0101ID")
+    private String jg0101id;
+
+    /**
+     * 班级名称
+     */
+    @TableField("BJMC")
+    private String bjmc;
 
 
 }

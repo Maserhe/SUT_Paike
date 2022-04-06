@@ -3,6 +3,8 @@ package cn.day1.service;
 import cn.day1.entity.WeixinBjmc;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -13,4 +15,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface WeixinBjmcService extends IService<WeixinBjmc> {
 
+
+    /**
+     *  获取某专业 入学年份的 列表
+     * @return
+     * @param ZYBH
+     */
+    List<String> getRxnfListByZyId(String ZYBH);
 }
