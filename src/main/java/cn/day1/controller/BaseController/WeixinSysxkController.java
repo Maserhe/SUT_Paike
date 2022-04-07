@@ -5,9 +5,14 @@ import cn.day1.common.constant.Result;
 import cn.day1.common.dto.sysdto.AddSysXkDto;
 import cn.day1.common.dto.sysdto.GetSysXkTableDto;
 import cn.day1.common.vo.jsxkvo.ClassVo;
+import cn.day1.common.vo.sysvo.SysXkListVo;
 import cn.day1.common.vo.sysvo.SysXkTableVo;
 import cn.day1.entity.WeixinSysxk;
+import cn.day1.entity.WeixinSyszk;
 import cn.day1.service.WeixinSysxkService;
+import cn.day1.service.WeixinSyszkService;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -19,8 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>
@@ -40,6 +44,9 @@ public class WeixinSysxkController {
 
     @Autowired
     private WeixinSysxkService sysxkService;
+
+    @Autowired
+    private WeixinSyszkService syszkService;
 
     @PostMapping("/addSysxk")
     public Result addSysXk(@Validated @RequestBody AddSysXkDto addSysXkDto) {
@@ -106,6 +113,49 @@ public class WeixinSysxkController {
             }
             res[x - 1][y - 1].getBjmcList().add(i.getBjmc());
         });
+        return Result.succ(res);
+    }
+
+    /**
+     * 根据 学期号 和 班级id 获取某个班级 的实验室排课 情况
+     * @param json
+     * @return
+     */
+    @PostMapping("/xklist")
+    public Result getSysXkList(@RequestBody String json) {
+        Assert.notNull(json, "参数错误");
+        Map<String, String> map = JSON.parseObject(json, new TypeReference<Map<String, String>>() {});
+        String Xnxq = map.get("Xnxq");
+        String BjId = map.get("BjId");
+        if (StringUtils.isEmpty(Xnxq) || StringUtils.isEmpty(BjId)) {
+            return Result.fail("参数有错");
+        }
+        List<WeixinSysxk> list = sysxkService.list(new QueryWrapper<WeixinSysxk>()
+                .eq("XNXQ01ID", Xnxq)
+                .eq("JX0404ID", BjId));
+        // 根据 实验室号 查询 学院
+        Map<String, String> ssmap = new HashMap<>();
+        list.forEach(t -> {
+            if (! ssmap.containsKey(t.getSysh())) {
+                WeixinSyszk sys = syszkService.getOne(new QueryWrapper<WeixinSyszk>().eq("SYSH", t.getSysh()));
+                ssmap.put(t.getSysh(), sys.getYxmc());
+            }
+        });
+
+        // 对 结果 进行排序
+        List<SysXkListVo> res = new ArrayList<>(list.size());
+        list.stream().forEach(t-> {
+            SysXkListVo sysXkListVo = new SysXkListVo();
+            BeanUtils.copyProperties(t, sysXkListVo);
+            sysXkListVo.setYxsmc(ssmap.get(t.getSysh()));
+            String[] split = t.getKksjmx().split("-");
+            if (split.length == 2) {
+                sysXkListVo.setKkDay(split[0]);
+                sysXkListVo.setKkSection(split[1]);
+            }
+            res.add(sysXkListVo);
+        });
+        Collections.sort(res);
         return Result.succ(res);
     }
 
