@@ -159,8 +159,28 @@ public class WeixinSysxkController {
         return Result.succ(res);
     }
 
-
-
+    /**
+     *  取消某个 选课， 别忘删除 缓存 Redis
+     * @param json
+     * @return
+     */
+    @PostMapping("/cancleXk")
+    public Result cancleSysxk(@RequestBody String json) {
+        Assert.notNull(json, "参数错误");
+        Map<String, String> map = JSON.parseObject(json, new TypeReference<Map<String, String>>() {});
+        String xnxq01ID = map.get("xnxq01ID");
+        String kkzc = map.get("kkzc");
+        String kksjmx = map.get("kksjmx");
+        String jg0101ID = map.get("jg0101ID");
+        // 参数判断
+        if(StringUtils.isEmpty(xnxq01ID) || StringUtils.isEmpty(kkzc) || StringUtils.isEmpty(kksjmx) || StringUtils.isEmpty(jg0101ID)) {
+            return Result.fail("参数错误");
+        }
+        // 删除数据
+        boolean res = sysxkService.remove(new QueryWrapper<WeixinSysxk>()
+                .eq("XNXQ01ID", xnxq01ID).eq("KKZC", kkzc).eq("KKSJMX", kksjmx).eq("JG0101ID", jg0101ID));
+        return res? Result.succ("删除成功"): Result.fail("删除失败");
+    }
 
 
 

@@ -50,4 +50,12 @@ public class SysXkTableVo implements Serializable {
      */
     private String bz;
 
+
+    /**
+     * 教工id
+     */
+    private String jg0101id;
+
+
+
 }
