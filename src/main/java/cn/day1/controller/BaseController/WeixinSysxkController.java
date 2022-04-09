@@ -55,13 +55,15 @@ public class WeixinSysxkController {
         if (classList == null) {
             return Result.fail("参数错误");
         }
-        WeixinSysxk one = sysxkService.getOne(new QueryWrapper<WeixinSysxk>()
+
+        List<WeixinSysxk> one = sysxkService.list(new QueryWrapper<WeixinSysxk>()
                 .eq("XNXQ01ID", addSysXkDto.getXnxq01id())
                 .eq("KKZC", addSysXkDto.getKkzc())
                 .eq("KKSJMX", addSysXkDto.getKksjmx())
                 .eq("SYSH", addSysXkDto.getSysh())
         );
-        if (one != null ) {
+
+        if (one != null && one.size() != 0 ) {
             return Result.fail("实验室已经被安排课程了");
         }
         if (StringUtils.isEmpty(addSysXkDto.getBz())) {
