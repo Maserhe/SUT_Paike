@@ -5,6 +5,7 @@ import cn.day1.common.constant.Result;
 import cn.day1.common.dto.sysdto.AddSysXkDto;
 import cn.day1.common.dto.sysdto.GetSysXkTableDto;
 import cn.day1.common.vo.jsxkvo.ClassVo;
+import cn.day1.common.vo.sysvo.SysPkListVo;
 import cn.day1.common.vo.sysvo.SysXkListVo;
 import cn.day1.common.vo.sysvo.SysXkTableVo;
 import cn.day1.entity.WeixinSysxk;
@@ -48,6 +49,11 @@ public class WeixinSysxkController {
     @Autowired
     private WeixinSyszkService syszkService;
 
+    /**
+     * 排课
+     * @param addSysXkDto
+     * @return
+     */
     @PostMapping("/addSysxk")
     public Result addSysXk(@Validated @RequestBody AddSysXkDto addSysXkDto) {
         Assert.notNull(addSysXkDto, "参数错误");
@@ -82,6 +88,11 @@ public class WeixinSysxkController {
         return flag ? Result.succ("添加成功"): Result.fail("添加失败");
     }
 
+    /**
+     * 查询某一周 排课的课表
+     * @param getSysXkTableDto
+     * @return
+     */
     @PostMapping("/sysxkTable")
     public Result getSysXkTable(@Validated @RequestBody GetSysXkTableDto getSysXkTableDto) {
         Assert.notNull(getSysXkTableDto, "参数错误");
@@ -135,6 +146,98 @@ public class WeixinSysxkController {
         List<WeixinSysxk> list = sysxkService.list(new QueryWrapper<WeixinSysxk>()
                 .eq("XNXQ01ID", Xnxq)
                 .eq("JX0404ID", BjId));
+
+        return Result.succ(processXkVo(list));
+    }
+
+    /**
+     * 根据教工id 和学期号 获取排课的列表
+     * @param json
+     * @return
+     */
+    @PostMapping("/Jgpklist")
+    public Result getJgpkList(@RequestBody String json) {
+        Assert.notNull(json, "参数错误");
+        Map<String, String> map = JSON.parseObject(json, new TypeReference<Map<String, String>>() {});
+        String Xnxq = map.get("Xnxq");
+        String JgId = map.get("JgId");
+        if (StringUtils.isEmpty(Xnxq) || StringUtils.isEmpty(JgId)) {
+            return Result.fail("参数有错");
+        }
+        List<WeixinSysxk> list = sysxkService.list(new QueryWrapper<WeixinSysxk>()
+                .eq("XNXQ01ID", Xnxq)
+                .eq("JG0101ID", JgId));
+        // 对数据进行加工
+        // 根据 实验室号 查询 学院
+        Map<String, String> ssmap = new HashMap<>();
+        list.forEach(t -> {
+            if (! ssmap.containsKey(t.getSysh())) {
+                WeixinSyszk sys = syszkService.getOne(new QueryWrapper<WeixinSyszk>().eq("SYSH", t.getSysh()));
+                ssmap.put(t.getSysh(), sys.getYxmc());
+            }
+        });
+        List<SysPkListVo> res = new ArrayList<>(list.size());
+
+        // 对同一个选择同一个实验室上课的班级 进行去除重复
+        Map<String, SysPkListVo> bjMap = new HashMap<>();
+        list.forEach(t-> {
+
+            final String key =t.getXnxq01id() + "&"+  t.getSysh() + "&" + t.getKksjmx() + "&" + t.getKkzc();
+            SysPkListVo sysPkListVo = null;
+
+            if (!bjMap.containsKey(key)) {
+                sysPkListVo = new SysPkListVo();
+                sysPkListVo.setBjmcList(new ArrayList<>());
+                bjMap.put(key, sysPkListVo);
+            }
+            sysPkListVo = bjMap.get(key);
+
+            BeanUtils.copyProperties(t, sysPkListVo);
+            sysPkListVo.setYxsmc(ssmap.get(t.getSysh()));
+            String[] split = t.getKksjmx().split("-");
+            if (split.length == 2) {
+                sysPkListVo.setKkDay(split[0]);
+                sysPkListVo.setKkSection(split[1]);
+            }
+            sysPkListVo.getBjmcList().add(t.getBjmc());
+            res.add(sysPkListVo);
+        });
+        Collections.sort(res);
+        return Result.succ(res);
+    }
+
+
+    /**
+     *  取消某个 选课， 别忘删除 缓存 Redis， 还有 实验室号忘了加了
+     * @param json
+     * @return
+     */
+    @PostMapping("/cancleXk")
+    public Result cancleSysxk(@RequestBody String json) {
+        Assert.notNull(json, "参数错误");
+        Map<String, String> map = JSON.parseObject(json, new TypeReference<Map<String, String>>() {});
+        String xnxq01ID = map.get("xnxq01ID");
+        String kkzc = map.get("kkzc");
+        String kksjmx = map.get("kksjmx");
+        String jg0101ID = map.get("jg0101ID");
+        String sysh = map.get("sysh");
+
+        // 参数判断
+        if(StringUtils.isEmpty(xnxq01ID) || StringUtils.isEmpty(kkzc) || StringUtils.isEmpty(kksjmx) || StringUtils.isEmpty(jg0101ID) || StringUtils.isEmpty(sysh)) {
+            return Result.fail("参数错误");
+        }
+        // 删除数据
+        boolean res = sysxkService.remove(new QueryWrapper<WeixinSysxk>()
+                .eq("XNXQ01ID", xnxq01ID)
+                .eq("KKZC", kkzc)
+                .eq("KKSJMX", kksjmx)
+                .eq("JG0101ID", jg0101ID)
+                .eq("SYSH", sysh));
+        return res? Result.succ("删除成功"): Result.fail("删除失败");
+    }
+
+
+    private List<SysXkListVo> processXkVo(List<WeixinSysxk> list) {
         // 根据 实验室号 查询 学院
         Map<String, String> ssmap = new HashMap<>();
         list.forEach(t -> {
@@ -148,6 +251,7 @@ public class WeixinSysxkController {
         List<SysXkListVo> res = new ArrayList<>(list.size());
         list.stream().forEach(t-> {
             SysXkListVo sysXkListVo = new SysXkListVo();
+
             BeanUtils.copyProperties(t, sysXkListVo);
             sysXkListVo.setYxsmc(ssmap.get(t.getSysh()));
             String[] split = t.getKksjmx().split("-");
@@ -158,33 +262,7 @@ public class WeixinSysxkController {
             res.add(sysXkListVo);
         });
         Collections.sort(res);
-        return Result.succ(res);
+        return res;
     }
-
-    /**
-     *  取消某个 选课， 别忘删除 缓存 Redis
-     * @param json
-     * @return
-     */
-    @PostMapping("/cancleXk")
-    public Result cancleSysxk(@RequestBody String json) {
-        Assert.notNull(json, "参数错误");
-        Map<String, String> map = JSON.parseObject(json, new TypeReference<Map<String, String>>() {});
-        String xnxq01ID = map.get("xnxq01ID");
-        String kkzc = map.get("kkzc");
-        String kksjmx = map.get("kksjmx");
-        String jg0101ID = map.get("jg0101ID");
-        // 参数判断
-        if(StringUtils.isEmpty(xnxq01ID) || StringUtils.isEmpty(kkzc) || StringUtils.isEmpty(kksjmx) || StringUtils.isEmpty(jg0101ID)) {
-            return Result.fail("参数错误");
-        }
-        // 删除数据
-        boolean res = sysxkService.remove(new QueryWrapper<WeixinSysxk>()
-                .eq("XNXQ01ID", xnxq01ID).eq("KKZC", kkzc).eq("KKSJMX", kksjmx).eq("JG0101ID", jg0101ID));
-        return res? Result.succ("删除成功"): Result.fail("删除失败");
-    }
-
-
-
 
 }
