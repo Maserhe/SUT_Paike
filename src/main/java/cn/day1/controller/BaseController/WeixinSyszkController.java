@@ -4,7 +4,9 @@ package cn.day1.controller.BaseController;
 import cn.day1.common.constant.Result;
 import cn.day1.common.dto.sysdto.AddSysDto;
 import cn.day1.common.dto.sysdto.SysDto;
+import cn.day1.entity.WeixinSysxk;
 import cn.day1.entity.WeixinSyszk;
+import cn.day1.service.WeixinSysxkService;
 import cn.day1.service.WeixinSyszkService;
 import cn.day1.utils.common.UUIDUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -37,6 +39,9 @@ public class WeixinSyszkController {
     @Autowired
     private WeixinSyszkService syszkService;
 
+    @Autowired
+    private WeixinSysxkService sysxkService;
+
 
     /**
      * 根据院系所id获取 实验室 Redis
@@ -59,7 +64,9 @@ public class WeixinSyszkController {
     public Result deleteSysById(String id) {
         Assert.notNull(id, "参数错误");
         final boolean res = syszkService.remove(new QueryWrapper<WeixinSyszk>().eq("SYSH", id));
-        return res? Result.succ("删除成功"): Result.fail("删除失败");
+        // 同时删除 跟 所有这个实验室排课的 课表
+        boolean sysh = sysxkService.remove(new QueryWrapper<WeixinSysxk>().eq("SYSH", id));
+        return res && sysh ? Result.succ("删除成功"): Result.fail("删除失败");
     }
 
     /**

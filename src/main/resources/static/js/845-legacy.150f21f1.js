@@ -1,2 +1,0 @@
-"use strict";(self["webpackChunkpaike_sut"]=self["webpackChunkpaike_sut"]||[]).push([[845],{42715:function(e,n,r){r.r(n),r.d(n,{default:function(){return i}});var u=r(13081),t=r(73396);function a(e,n,r,a,s,c){var f=u.Z;return(0,t.wg)(),(0,t.j4)(f)}var s={components:{SearchClassSchedule:u.Z}},c=r(40089);const f=(0,c.Z)(s,[["render",a]]);var i=f}}]);
-//# sourceMappingURL=845-legacy.150f21f1.js.map

@@ -1,2 +1,0 @@
-"use strict";(self["webpackChunkpaike_sut"]=self["webpackChunkpaike_sut"]||[]).push([[426],{5426:function(n,t,e){e.r(t),e.d(t,{default:function(){return i}});e(3852);var u=e(4143),c=e(3396);const a=(0,c._)("h1",null,"teacher",-1);function r(n,t,e,r,s,f){const o=u.Kf;return(0,c.wg)(),(0,c.j4)(o,{class:"account-container"},{default:(0,c.w5)((()=>[a])),_:1})}var s={},f=e(89);const o=(0,f.Z)(s,[["render",r]]);var i=o},3852:function(n,t,e){e(1758)}}]);
-//# sourceMappingURL=426.34a3d2a5.js.map

@@ -3,6 +3,7 @@ package cn.day1.controller.BaseController;
 
 import cn.day1.common.constant.Result;
 import cn.day1.common.dto.sysdto.AddSysXkDto;
+import cn.day1.common.dto.sysdto.ChangeSysXkDto;
 import cn.day1.common.dto.sysdto.GetSysXkTableDto;
 import cn.day1.common.vo.jsxkvo.ClassVo;
 import cn.day1.common.vo.sysvo.SysPkListVo;
@@ -85,6 +86,51 @@ public class WeixinSysxkController {
         });
         // 先查询 这个时间段没有 排课
         boolean flag = sysxkService.saveBatch(list);
+        return flag ? Result.succ("添加成功"): Result.fail("添加失败");
+    }
+
+    /**
+     * 教师 修改实验室 信息
+     * @param changeSysXkDto
+     * @return
+     */
+    @PostMapping("/changeXk")
+    public Result changeSysXk(@Validated @RequestBody ChangeSysXkDto changeSysXkDto) {
+        Assert.notNull(changeSysXkDto, "参数错误");
+        final List<ClassVo> classList = changeSysXkDto.getClassList();
+        if (classList == null) {
+            return Result.fail("参数错误");
+        }
+        // 查询 这个课程
+        QueryWrapper<WeixinSysxk> queryWrapper = new QueryWrapper<WeixinSysxk>()
+                .eq("XNXQ01ID", changeSysXkDto.getXnxq01id())
+                .eq("KKZC", changeSysXkDto.getKkzc())
+                .eq("KKSJMX", changeSysXkDto.getKksjmx())
+                .eq("SYSH", changeSysXkDto.getSysh());
+
+        final List<WeixinSysxk> list = sysxkService.list(queryWrapper);
+        final boolean remove = sysxkService.remove(queryWrapper);
+        if (list == null || list.isEmpty() || !remove) {
+            return Result.fail("系统出错，修改失败!");
+        }
+        // 添加 新的 数据
+        if (StringUtils.isEmpty(changeSysXkDto.getBz())) {
+            changeSysXkDto.setBz("无");
+        }
+        List<WeixinSysxk> newSysxk = new ArrayList<>(changeSysXkDto.getClassList().size());
+        WeixinSysxk first = list.stream().findFirst().orElse(null);
+
+        classList.forEach(i -> {
+            // 需要 first 中 yxsh,
+            WeixinSysxk sysxk = new WeixinSysxk();
+            BeanUtils.copyProperties(changeSysXkDto, sysxk);
+            sysxk.setBjmc(i.getBjmc());
+            sysxk.setJx0404id(i.getBh());
+            sysxk.setYxsh(first.getYxsh());
+            sysxk.setSysmph(first.getSysmph());
+            newSysxk.add(sysxk);
+        });
+        boolean flag = sysxkService.saveBatch(newSysxk);
         return flag ? Result.succ("添加成功"): Result.fail("添加失败");
     }
 
@@ -176,6 +222,7 @@ public class WeixinSysxkController {
                 ssmap.put(t.getSysh(), sys.getYxmc());
             }
         });
+
         List<SysPkListVo> res = new ArrayList<>(list.size());
 
         // 对同一个选择同一个实验室上课的班级 进行去除重复
@@ -189,6 +236,8 @@ public class WeixinSysxkController {
                 sysPkListVo = new SysPkListVo();
                 sysPkListVo.setBjmcList(new ArrayList<>());
                 bjMap.put(key, sysPkListVo);
+                res.add(sysPkListVo);
+
             }
             sysPkListVo = bjMap.get(key);
 
@@ -200,12 +249,11 @@ public class WeixinSysxkController {
                 sysPkListVo.setKkSection(split[1]);
             }
             sysPkListVo.getBjmcList().add(t.getBjmc());
-            res.add(sysPkListVo);
         });
         Collections.sort(res);
+
         return Result.succ(res);
     }
-
 
     /**
      *  取消某个 选课， 别忘删除 缓存 Redis， 还有 实验室号忘了加了
