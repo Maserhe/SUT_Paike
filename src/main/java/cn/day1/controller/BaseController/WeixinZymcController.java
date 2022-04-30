@@ -5,6 +5,7 @@ import cn.day1.common.constant.Result;
 import cn.day1.entity.WeixinZymc;
 import cn.day1.service.WeixinZymcService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,6 +37,7 @@ public class WeixinZymcController {
      * @return
      */
     @PostMapping("/getZyList")
+    @RequiresAuthentication
     public Result getZyListByYxsId(String YxsId) {
         Assert.notNull(YxsId, "参数错误");
         List<WeixinZymc> data = zymcService.list(new QueryWrapper<WeixinZymc>().eq("YXSH", YxsId));

@@ -9,6 +9,7 @@ import cn.day1.utils.common.JedisUtil;
 import cn.day1.utils.JwtUtil;
 import cn.day1.common.dto.LoginUserDto;
 import com.alibaba.druid.util.Utils;
+import com.cxytiandi.encrypt.springboot.annotation.Encrypt;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;

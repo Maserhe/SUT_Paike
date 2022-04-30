@@ -4,6 +4,7 @@ package cn.day1.controller.BaseController;
 import cn.day1.common.constant.Result;
 import cn.day1.entity.WeixinYxs;
 import cn.day1.service.WeixinYxsService;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,7 @@ public class WeixinYxsController {
      * 查找学院信息， 所有登陆用户都可查询 redis
      * @return
      */
+    @RequiresAuthentication
     @GetMapping("/getAllYxs")
     public Result getAllYxsInfo() {
         List<WeixinYxs> list = yxsService.list();

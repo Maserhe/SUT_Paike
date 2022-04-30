@@ -8,7 +8,9 @@ spring:
   redis:
     host: localhost
     port: 6379
-    password: Maserhe123456..
+  # api 加密字符
+  encrypt:
+    key: abcdef0123456789
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**Mapper.xml
@@ -18,7 +20,19 @@ shiro-redis:
   redis-manager:
     host: 127.0.0.1:6379
 
-
+redis:
+  host: 127.0.0.1
+  # Redis port
+  port: 6379
+  # Redis password, 没设置可以不用填写
+  password:
+  timeout: 10000
+  # 连接池设置
+  pool:
+    max-active: 200
+    max-wait: -1
+    max-idle: 8
+    min-idle: 0
 
 
 jwt:
@@ -29,4 +43,3 @@ jwt:
     #    expiration: 604800
     #    一天
     expiration: 86400
-

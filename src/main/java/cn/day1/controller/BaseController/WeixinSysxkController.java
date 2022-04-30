@@ -17,6 +17,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -56,6 +58,7 @@ public class WeixinSysxkController {
      * @return
      */
     @PostMapping("/addSysxk")
+    @RequiresAuthentication
     public Result addSysXk(@Validated @RequestBody AddSysXkDto addSysXkDto) {
         Assert.notNull(addSysXkDto, "参数错误");
         final List<ClassVo> classList = addSysXkDto.getClassList();
@@ -95,6 +98,7 @@ public class WeixinSysxkController {
      * @return
      */
     @PostMapping("/changeXk")
+    @RequiresAuthentication
     public Result changeSysXk(@Validated @RequestBody ChangeSysXkDto changeSysXkDto) {
         Assert.notNull(changeSysXkDto, "参数错误");
         final List<ClassVo> classList = changeSysXkDto.getClassList();
@@ -140,6 +144,7 @@ public class WeixinSysxkController {
      * @return
      */
     @PostMapping("/sysxkTable")
+    @RequiresAuthentication
     public Result getSysXkTable(@Validated @RequestBody GetSysXkTableDto getSysXkTableDto) {
         Assert.notNull(getSysXkTableDto, "参数错误");
         // 更具参数 查表
@@ -181,6 +186,7 @@ public class WeixinSysxkController {
      * @return
      */
     @PostMapping("/xklist")
+    @RequiresAuthentication
     public Result getSysXkList(@RequestBody String json) {
         Assert.notNull(json, "参数错误");
         Map<String, String> map = JSON.parseObject(json, new TypeReference<Map<String, String>>() {});
@@ -202,6 +208,7 @@ public class WeixinSysxkController {
      * @return
      */
     @PostMapping("/Jgpklist")
+    @RequiresAuthentication
     public Result getJgpkList(@RequestBody String json) {
         Assert.notNull(json, "参数错误");
         Map<String, String> map = JSON.parseObject(json, new TypeReference<Map<String, String>>() {});
@@ -261,6 +268,7 @@ public class WeixinSysxkController {
      * @return
      */
     @PostMapping("/cancleXk")
+    @RequiresRoles("TEACHER")
     public Result cancleSysxk(@RequestBody String json) {
         Assert.notNull(json, "参数错误");
         Map<String, String> map = JSON.parseObject(json, new TypeReference<Map<String, String>>() {});

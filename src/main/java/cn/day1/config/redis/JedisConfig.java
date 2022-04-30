@@ -13,14 +13,13 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 /**
  * Description:
- *
  * @author maserhe
  * @date 2022/3/8 8:49 上午
  **/
 @Configuration
+@ConfigurationProperties(prefix = "redis")
 @EnableAutoConfiguration
 @PropertySource("classpath:config.properties")
-@ConfigurationProperties(prefix = "redis")
 public class JedisConfig {
 
     /**

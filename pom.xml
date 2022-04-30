@@ -178,6 +178,14 @@
             <version>2.0</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.cxytiandi/monkey-api-encrypt-core -->
+        <dependency>
+            <groupId>com.cxytiandi</groupId>
+            <artifactId>monkey-api-encrypt-core</artifactId>
+            <version>1.2.2.RELEASE</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>

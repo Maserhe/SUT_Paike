@@ -13,6 +13,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.csvreader.CsvReader;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -49,6 +51,7 @@ public class WeixinSyszkController {
      * @return
      */
     @GetMapping("/getById")
+    @RequiresAuthentication
     public Result getSysByYxsId(String id) {
         Assert.notNull(id, "参数错误");
         List<WeixinSyszk> yxsh = syszkService.list(new QueryWrapper<WeixinSyszk>().eq("YXSH", id));
@@ -61,12 +64,13 @@ public class WeixinSyszkController {
      * @return
      */
     @PostMapping("/deleteById")
+    @RequiresRoles("ADMIN")
     public Result deleteSysById(String id) {
         Assert.notNull(id, "参数错误");
         final boolean res = syszkService.remove(new QueryWrapper<WeixinSyszk>().eq("SYSH", id));
         // 同时删除 跟 所有这个实验室排课的 课表
         boolean sysh = sysxkService.remove(new QueryWrapper<WeixinSysxk>().eq("SYSH", id));
-        return res && sysh ? Result.succ("删除成功"): Result.fail("删除失败");
+        return res ? Result.succ("删除成功"): Result.fail("删除失败");
     }
 
     /**
@@ -74,7 +78,7 @@ public class WeixinSyszkController {
      * @param sysDto
      * @return
      */
-    @PostMapping("/updateSysInfo")
+    @RequiresRoles("ADMIN")
     public Result updateSysInfo(@Validated @RequestBody SysDto sysDto) {
         Assert.notNull(sysDto, "参数错误");
         boolean res = syszkService.update(new UpdateWrapper<WeixinSyszk>()
@@ -90,6 +94,7 @@ public class WeixinSyszkController {
      * @return
      */
     @PostMapping("/addSys")
+    @RequiresRoles("ADMIN")
     public Result addSys(@Validated @RequestBody AddSysDto addSysDto) {
         Assert.notNull(addSysDto, "参数错误");
         // 查询数据库中，当前院系所是否 已经添加了该实验室
@@ -117,6 +122,7 @@ public class WeixinSyszkController {
      * @return
      */
     @PostMapping("/addSYSList")
+    @RequiresAuthentication
     public Result addSYS(@RequestParam("file") MultipartFile file, String YxsId, String YxsMc){
         // 处理上传的文件
         Assert.notNull(file, "上传文件不能为空");

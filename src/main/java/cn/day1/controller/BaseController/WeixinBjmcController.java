@@ -5,6 +5,7 @@ import cn.day1.common.constant.Result;
 import cn.day1.entity.WeixinBjmc;
 import cn.day1.service.WeixinBjmcService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,6 +34,7 @@ public class WeixinBjmcController {
      * @param ZyId
      * @return
      */
+    @RequiresAuthentication
     @PostMapping("/getBjListByZyId")
     public Result  getBjListByZyId(String ZyId) {
         Assert.notNull(ZyId, "参数错误");
@@ -46,6 +48,7 @@ public class WeixinBjmcController {
      * @return
      */
     @PostMapping("/getRxnfList")
+    @RequiresAuthentication
     public Result getBjRxnfByZyId(String ZyId) {
         Assert.notNull(ZyId, "参数错误");
         List<String> rxnfListByZyId = bjmcService.getRxnfListByZyId(ZyId);
@@ -59,6 +62,7 @@ public class WeixinBjmcController {
      * @return
      */
     @PostMapping("/getBjList")
+    @RequiresAuthentication
     public Result getBjListByRxnfAndZyId(String ZyId, String Rxnf) {
         Assert.notNull(ZyId, "参数错误");
         Assert.notNull(Rxnf, "参数错误");

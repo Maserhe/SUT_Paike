@@ -5,6 +5,7 @@ import cn.day1.entity.WeixinUser;
 import cn.day1.service.WeixinUserService;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -32,6 +33,7 @@ public class WeixinUserController {
     private WeixinUserService weixinUserService;
 
     @RequestMapping("/user")
+    @RequiresAuthentication
     public String getUserInfo(String username) {
 
         WeixinUser user = weixinUserService.getOne(new QueryWrapper<WeixinUser>().eq("USERACCOUNT", username));

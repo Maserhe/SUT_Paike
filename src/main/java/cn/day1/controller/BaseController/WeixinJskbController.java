@@ -11,6 +11,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import io.jsonwebtoken.lang.Assert;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,6 +43,7 @@ public class WeixinJskbController {
      * @return
      */
     @PostMapping("/getjskb")
+    @RequiresAuthentication
     public Result getJskb(@RequestBody String json) {
         // 解析字符串
         Assert.notNull(json, "参数错误");
