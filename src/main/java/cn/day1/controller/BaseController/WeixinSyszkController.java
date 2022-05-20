@@ -55,8 +55,15 @@ public class WeixinSyszkController {
     public Result getSysByYxsId(String id) {
         Assert.notNull(id, "参数错误");
         List<WeixinSyszk> yxsh = syszkService.list(new QueryWrapper<WeixinSyszk>().eq("YXSH", id));
+        yxsh.sort(new Comparator<WeixinSyszk>() {
+            @Override
+            public int compare(WeixinSyszk o1, WeixinSyszk o2) {
+                return o1.getSysmph().compareTo(o2.getSysmph());
+            }
+        });
         return Result.succ("获取成功", yxsh);
     }
+
 
     /**
      * 根据实验室的id 删除实验室  管理员权限
@@ -73,17 +80,22 @@ public class WeixinSyszkController {
         return res ? Result.succ("删除成功"): Result.fail("删除失败");
     }
 
+
     /**
      * 更新实验室的 信息， redis 删除缓存  管理员权限， 删除根据院系所获取得到的实验室列表的缓存， 删除 当前实验室信息的缓存
      * @param sysDto
      * @return
      */
     @RequiresRoles("ADMIN")
+    @PostMapping("/updateSysInfo")
     public Result updateSysInfo(@Validated @RequestBody SysDto sysDto) {
         Assert.notNull(sysDto, "参数错误");
+
         boolean res = syszkService.update(new UpdateWrapper<WeixinSyszk>()
                 .eq("SYSH", sysDto.getSysh())
                 .set("SYSMC", sysDto.getSysmc())
+                        .set("CAPACITY", sysDto.getCapacity())
+                        .set("SYSTYPE", sysDto.getSystype())
                 .set("SYSMPH", sysDto.getSysmph()));
         return res? Result.succ("更新成功"): Result.fail("更新失败");
     }
@@ -106,6 +118,7 @@ public class WeixinSyszkController {
         if (StringUtils.isEmpty(addSysDto.getSysmc())) {
             addSysDto.setSysmc("机房");
         }
+
         WeixinSyszk sys = new WeixinSyszk();
         BeanUtils.copyProperties(addSysDto, sys);
         sys.setSysh(UUIDUtils.createUUUID());
@@ -131,6 +144,7 @@ public class WeixinSyszkController {
 
         // 1，判断上传的实验室文件中有没有重复的实验室号
         Set<WeixinSyszk> set = new HashSet<>(1);
+
         try {
             CsvReader csvReader = new CsvReader(file.getInputStream(), Charset.defaultCharset());
             // 1, 跳过首行
@@ -139,12 +153,19 @@ public class WeixinSyszkController {
             while (csvReader.readRecord()) {
                 String sysName = csvReader.get(0);
                 String sysNumber = csvReader.get(1);
+                String sysCapacity = csvReader.get(2);
+
                 Assert.notNull(sysName, "存在一行,实验室名为空，参数错误");
                 Assert.notNull(sysNumber, "存在一行，实验室门牌号为空，参数错误");
+                Assert.notNull(sysCapacity, "存在一行，实验室容量号为空，参数错误");
 
                 WeixinSyszk syszk = new WeixinSyszk();
+
                 syszk.setSysmc(sysName);
                 syszk.setSysmph(sysNumber);
+                syszk.setCapacity(sysCapacity);
+                syszk.setSystype("0");
+
                 syszk.setYxsh(YxsId);
                 syszk.setYxmc(YxsMc);
                 syszk.setSysh(UUIDUtils.createUUUID());

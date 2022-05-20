@@ -43,4 +43,17 @@ public class SysDto implements Serializable {
     private String sysmph;
 
 
+    /**
+     * 实验室的人数
+     */
+    @NotBlank(message = "实验室的容量不能为空")
+    private String capacity;
+
+    /**
+     * 实验室的 类型
+     *
+     */
+    @NotBlank(message = "实验室的类型不能为空")
+    private String systype;
+
 }

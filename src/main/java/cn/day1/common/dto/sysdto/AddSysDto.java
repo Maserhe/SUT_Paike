@@ -46,4 +46,16 @@ public class AddSysDto implements Serializable {
     @NotBlank(message = "院系所名称不能为空")
     private String yxmc;
 
+    /**
+     * 实验室的容量
+     */
+    @NotBlank(message = "人数不能为空")
+    private String capacity;
+
+    /**
+     * 实验室的状态
+     */
+    @NotBlank(message = "实验室的状态不能为空")
+    private String systype;
+
 }

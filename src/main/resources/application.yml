@@ -2,9 +2,9 @@
 spring:
   datasource:
     druid:
-      url: jdbc:oracle:thin:@81.68.195.233:1521:helowin
+      url: jdbc:oracle:thin:@121.36.132.192:1521:helowin
       username: dev
-      password: dev
+      password: system
   redis:
     host: localhost
     port: 6379

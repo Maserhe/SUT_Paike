@@ -56,6 +56,27 @@ public class WeixinSyszk implements Serializable {
     @TableField("YXMC")
     private String yxmc;
 
+    /**
+     * 实验室的 类型。0 开放， 1， 禁用， 2， 故障保修
+     */
+    @TableField("SYSTYPE")
+    private String systype;
+
+    /**
+     * 实验室的 容量
+     */
+    @TableField("CAPACITY")
+    private String capacity;
+
+    /**
+     * 实验室的故障信息
+     */
+    @TableField("INFO")
+    private String info;
+
+
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
