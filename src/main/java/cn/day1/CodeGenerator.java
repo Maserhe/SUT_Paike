@@ -59,11 +59,11 @@ public class CodeGenerator {
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:oracle:thin:@localhost:1521:helowin");
+        dsc.setUrl("jdbc:oracle:thin:@121.36.132.192:1521:helowin");
         // dsc.setSchemaName("public");
         dsc.setDriverName("oracle.jdbc.OracleDriver");
         dsc.setUsername("dev");
-        dsc.setPassword("dev");
+        dsc.setPassword("system");
         mpg.setDataSource(dsc);
 
         // 包配置

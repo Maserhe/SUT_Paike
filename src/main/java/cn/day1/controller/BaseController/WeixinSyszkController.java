@@ -4,6 +4,7 @@ package cn.day1.controller.BaseController;
 import cn.day1.common.constant.Result;
 import cn.day1.common.dto.sysdto.AddSysDto;
 import cn.day1.common.dto.sysdto.SysDto;
+import cn.day1.common.vo.sysvo.SysCasCaderVo;
 import cn.day1.entity.WeixinSysxk;
 import cn.day1.entity.WeixinSyszk;
 import cn.day1.service.WeixinSysxkService;
@@ -63,6 +64,7 @@ public class WeixinSyszkController {
         });
         return Result.succ("获取成功", yxsh);
     }
+
 
 
     /**
@@ -126,8 +128,6 @@ public class WeixinSyszkController {
         final boolean res = syszkService.save(sys);
         return res? Result.succ("添加成功"): Result.fail("添加失败");
     }
-
-
 
     /**
      * 多余
