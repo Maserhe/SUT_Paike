@@ -2,14 +2,18 @@ package cn.day1.controller.BaseController;
 
 
 import cn.day1.common.constant.Result;
+import cn.day1.common.constant.StateEnum;
 import cn.day1.common.dto.sysdto.AddSysDto;
 import cn.day1.common.dto.sysdto.SysDto;
-import cn.day1.common.vo.sysvo.SysCasCaderVo;
+import cn.day1.entity.WeixinSbzk;
 import cn.day1.entity.WeixinSysxk;
 import cn.day1.entity.WeixinSyszk;
+import cn.day1.service.WeixinSbzkService;
 import cn.day1.service.WeixinSysxkService;
 import cn.day1.service.WeixinSyszkService;
 import cn.day1.utils.common.UUIDUtils;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -45,6 +49,8 @@ public class WeixinSyszkController {
     @Autowired
     private WeixinSysxkService sysxkService;
 
+    @Autowired
+    private WeixinSbzkService sbzkService;
 
     /**
      * 根据院系所id获取 实验室 Redis
@@ -96,11 +102,76 @@ public class WeixinSyszkController {
         boolean res = syszkService.update(new UpdateWrapper<WeixinSyszk>()
                 .eq("SYSH", sysDto.getSysh())
                 .set("SYSMC", sysDto.getSysmc())
-                        .set("CAPACITY", sysDto.getCapacity())
-                        .set("SYSTYPE", sysDto.getSystype())
+                .set("CAPACITY", sysDto.getCapacity())
+                .set("SYSTYPE", sysDto.getSystype())
                 .set("SYSMPH", sysDto.getSysmph()));
         return res? Result.succ("更新成功"): Result.fail("更新失败");
     }
+
+    /**
+     * 修理实验室，
+     * @param json
+     * @return
+     */
+    @PostMapping("/repairSys")
+    @RequiresAuthentication
+    public Result repairSys(@RequestBody String json) {
+        // 解析字符串
+        io.jsonwebtoken.lang.Assert.notNull(json, "参数错误");
+        Map<String, String> map = JSON.parseObject(json, new TypeReference<Map<String, String>>() {});
+        String sysh = map.get("sysh");
+        String info = map.get("info");
+        String systype = map.get("systype");
+        // 查询是否 有设备未 维修
+        List<WeixinSbzk> list = sbzkService.list(new QueryWrapper<WeixinSbzk>().eq("SYSH", sysh).eq("SBZT", String.valueOf(StateEnum.FAULT.getType())));
+        if (!list.isEmpty()) {
+            systype = String.valueOf(StateEnum.FAULT.getType());
+        }
+
+        // 更新
+        boolean res = syszkService.update(new UpdateWrapper<WeixinSyszk>()
+                .eq("SYSH", sysh)
+                .set("SYSTYPE", systype)
+                .set("INFO", info)
+        );
+
+        if (systype.equals(String.valueOf(StateEnum.NORAMAL.getType()))) {
+            return res? Result.succ("实验室正常"): Result.fail("实验室更改失败");
+        } else if(systype.equals(String.valueOf(StateEnum.DISABLE.getType()))){
+            return res? Result.succ("禁用成功"): Result.fail("禁用失败");
+        } else {
+            return res? Result.succ("申请成功"): Result.fail("申请失败");
+        }
+    }
+
+    /**
+     * 获取所有 需要报修的实验室
+     * @return
+     */
+    @PostMapping("/sysFaultList")
+    @RequiresAuthentication
+    public Result faultSysList() {
+        // 解析字符串
+        List<WeixinSyszk> list = syszkService.list(new QueryWrapper<WeixinSyszk>().eq("SYSTYPE", String.valueOf(StateEnum.FAULT.getType())));
+        return Result.succ(list);
+    }
+
+    /**
+     * 获取 某个实验室的 需要报修的 实验室列表
+     * @param json
+     * @return
+     */
+    @RequiresRoles("ADMIN")
+    @PostMapping("/yxsFaultSysList")
+    public Result faultSysListByYxsId(@RequestBody String json) {
+        // 解析字符串
+        io.jsonwebtoken.lang.Assert.notNull(json, "参数错误");
+        Map<String, String> map = JSON.parseObject(json, new TypeReference<Map<String, String>>() {});
+        String id = map.get("id");
+        List<WeixinSyszk> list = syszkService.list(new QueryWrapper<WeixinSyszk>().eq("YXSH", id).eq("SYSTYPE", String.valueOf(StateEnum.FAULT.getType())));
+        return Result.succ(list);
+    }
+
 
     /**
      * 添加实验室  删除实验室列表的缓存 Redis
