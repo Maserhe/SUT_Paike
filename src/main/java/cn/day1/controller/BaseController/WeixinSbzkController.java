@@ -105,7 +105,6 @@ public class WeixinSbzkController {
      * @return
      */
     @RequiresRoles("ADMIN")
-
     @PostMapping("/updateDevice")
     public Result updateSb(@RequestBody @Validated UpdateSbDto sbDto) {
         Assert.notNull(sbDto, "参数错误");
