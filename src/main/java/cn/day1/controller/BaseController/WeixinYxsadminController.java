@@ -4,7 +4,9 @@ package cn.day1.controller.BaseController;
 import cn.day1.common.constant.Result;
 import cn.day1.common.dto.admindto.AddAdminDto;
 import cn.day1.common.vo.adminVo.YxsAdminVo;
+import cn.day1.entity.WeixinUser;
 import cn.day1.entity.WeixinYxsadmin;
+import cn.day1.service.WeixinUserService;
 import cn.day1.service.WeixinYxsadminService;
 import com.alibaba.druid.util.Utils;
 import com.alibaba.fastjson.JSON;
@@ -42,6 +44,9 @@ public class WeixinYxsadminController {
     @Autowired
     private WeixinYxsadminService yxsadminService;
 
+    @Autowired
+    private WeixinUserService userService;
+
     /**
      * 添加管理员
      * @param adminDto
@@ -52,10 +57,11 @@ public class WeixinYxsadminController {
     public Result addAdmin(@RequestBody @Validated AddAdminDto adminDto) {
         Assert.notNull(adminDto, "参数错误");
         // 查询是否数据库中是否 已经存在该字段
-        WeixinYxsadmin one = yxsadminService.getOne(new QueryWrapper<WeixinYxsadmin>().eq("USERACCOUNT", adminDto.getUseraccount()));
+        WeixinUser one = userService.getUserInfoByAccount(adminDto.getUseraccount());
         if (one != null) {
-            return Result.fail("该二级管理员账号已经存在");
+            return Result.fail("该账号已经存在");
         }
+
         // 插入数据中
         String passwd = Utils.md5(adminDto.getUserpasswd());
         WeixinYxsadmin newAdmin = new WeixinYxsadmin();

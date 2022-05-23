@@ -37,6 +37,10 @@ public class AccountVo implements Serializable {
     private String userenable;
 
 
+    /**
+     * 如果是 二级管理员 改字段 存在
+     */
+    private String yxsh;
 
 
 }

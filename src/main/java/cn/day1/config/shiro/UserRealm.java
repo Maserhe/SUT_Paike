@@ -6,6 +6,7 @@ import cn.day1.common.exception.CustomUnauthorizedException;
 import cn.day1.config.shiro.jwt.JwtToken;
 import cn.day1.entity.WeixinUser;
 import cn.day1.service.WeixinUserService;
+import cn.day1.service.WeixinYxsadminService;
 import cn.day1.utils.common.JedisUtil;
 import cn.day1.utils.JwtUtil;
 import cn.day1.utils.common.StringUtil;
@@ -55,6 +56,7 @@ public class UserRealm extends AuthorizingRealm {
         // 分配 身份
         final String type = user.getUseraccounttype();
         String role = "";
+
         switch (type) {
             case "0":
                 role = RoleEnum.ADMIN.name();
@@ -64,6 +66,9 @@ public class UserRealm extends AuthorizingRealm {
                 break;
             case "2":
                 role = RoleEnum.STUDENT.name();
+                break;
+            case "3":
+                role = RoleEnum.ADMIN.name();
                 break;
         }
 

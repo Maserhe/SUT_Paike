@@ -4,11 +4,14 @@ import cn.day1.common.constant.Constant;
 import cn.day1.common.constant.Result;
 import cn.day1.common.vo.AccountVo;
 import cn.day1.entity.WeixinUser;
+import cn.day1.entity.WeixinYxsadmin;
 import cn.day1.service.WeixinUserService;
+import cn.day1.service.WeixinYxsadminService;
 import cn.day1.utils.common.JedisUtil;
 import cn.day1.utils.JwtUtil;
 import cn.day1.common.dto.LoginUserDto;
 import com.alibaba.druid.util.Utils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cxytiandi.encrypt.springboot.annotation.Encrypt;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -36,6 +39,9 @@ public class LoginController {
 
     @Autowired
     private WeixinUserService userService;
+
+    @Autowired
+    private WeixinYxsadminService yxsadminService;
 
 
     @PostMapping("/login")
@@ -73,8 +79,14 @@ public class LoginController {
 
         AccountVo vo = new AccountVo();
         BeanUtils.copyProperties(user, vo);
+        if (vo.getUseraccounttype().equals("3")) {
+            WeixinYxsadmin temp = yxsadminService.getOne(new QueryWrapper<WeixinYxsadmin>().eq("USERACCOUNT", user.getUseraccount()));
+            vo.setYxsh(temp.getYxsh());
+        }
+
         return Result.succ("登陆成功！", vo);
     }
+
 
     /**
      * 登出
@@ -101,7 +113,7 @@ public class LoginController {
         WeixinUser user = userService.getUserInfoByAccount(name);
         String type = user.getUseraccounttype();
         String role = "";
-        if (type.equals("0")) {
+        if (type.equals("0") || type.equals("3")) {
             role = "admin";
         } else if (type.equals("1")){
             role = "teacher";
