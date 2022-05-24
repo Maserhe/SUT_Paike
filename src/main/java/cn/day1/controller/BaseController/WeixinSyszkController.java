@@ -72,7 +72,6 @@ public class WeixinSyszkController {
     }
 
 
-
     /**
      * 根据实验室的id 删除实验室  管理员权限
      * @param id
@@ -85,6 +84,8 @@ public class WeixinSyszkController {
         final boolean res = syszkService.remove(new QueryWrapper<WeixinSyszk>().eq("SYSH", id));
         // 同时删除 跟 所有这个实验室排课的 课表
         boolean sysh = sysxkService.remove(new QueryWrapper<WeixinSysxk>().eq("SYSH", id));
+        // 同时删除 跟 这个实验室的 设备
+        sbzkService.remove(new QueryWrapper<WeixinSbzk>().eq("SYSH", id));
         return res ? Result.succ("删除成功"): Result.fail("删除失败");
     }
 
