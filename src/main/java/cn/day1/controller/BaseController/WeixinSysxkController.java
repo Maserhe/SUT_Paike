@@ -5,14 +5,20 @@ import cn.day1.common.constant.Result;
 import cn.day1.common.dto.sysdto.AddSysXkDto;
 import cn.day1.common.dto.sysdto.ChangeSysXkDto;
 import cn.day1.common.dto.sysdto.GetSysXkTableDto;
+import cn.day1.common.vo.countcourse.SysCountCourse;
+import cn.day1.common.vo.countcourse.SysCountVo;
+import cn.day1.common.vo.countcourse.YxsCountCourse;
+import cn.day1.common.vo.countcourse.YxsCountvo;
 import cn.day1.common.vo.jsxkvo.ClassVo;
 import cn.day1.common.vo.sysvo.SysPkListVo;
 import cn.day1.common.vo.sysvo.SysXkListVo;
 import cn.day1.common.vo.sysvo.SysXkTableVo;
 import cn.day1.entity.WeixinSysxk;
 import cn.day1.entity.WeixinSyszk;
+import cn.day1.entity.WeixinYxs;
 import cn.day1.service.WeixinSysxkService;
 import cn.day1.service.WeixinSyszkService;
+import cn.day1.service.WeixinYxsService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -44,13 +50,16 @@ public class WeixinSysxkController {
 
     final private static int DAYNUMBER = 7;
 
-    final private static int SECTIONNUMBER = 5;
+    final private static int SECTIONNUMBER = 6;
 
     @Autowired
     private WeixinSysxkService sysxkService;
 
     @Autowired
     private WeixinSyszkService syszkService;
+
+    @Autowired
+    private WeixinYxsService yxsService;
 
     /**
      * 排课
@@ -156,7 +165,7 @@ public class WeixinSysxkController {
         // 数据进行处理
         final List<List<SysXkTableVo>> ans = new ArrayList<>(7);
         for (int i = 0; i < DAYNUMBER; i ++ ) {
-            ans.add(new ArrayList<>(5));
+            ans.add(new ArrayList<>(6));
         }
         SysXkTableVo[][] res = new SysXkTableVo[DAYNUMBER][SECTIONNUMBER];
         list.forEach(i-> {
@@ -320,5 +329,81 @@ public class WeixinSysxkController {
         Collections.sort(res);
         return res;
     }
+
+    @RequiresRoles("ADMIN")
+    @PostMapping("/yxscountcourse")
+    public Result yxsCountCourse(@RequestBody String json) {
+        // 解析字符串
+        io.jsonwebtoken.lang.Assert.notNull(json, "参数错误");
+        Map<String, String> jsonmap = JSON.parseObject(json, new TypeReference<Map<String, String>>() {});
+        String xnxq = jsonmap.get("xnxq");
+        // 统计功能
+        if (StringUtils.isEmpty(xnxq)) {
+            return Result.fail("参数错误");
+        }
+        // 统计每个学院
+        List<WeixinYxs> list = yxsService.list();
+        // 统计每个学院
+        List<YxsCountCourse> yxsCountCourseList = sysxkService.getYxsCountCourseList(xnxq);
+        // 构造返回数据。
+        Map<String, String> map = new HashMap<>(yxsCountCourseList.size());
+        yxsCountCourseList.forEach(i -> {
+            map.put(i.getDwh(), i.getSum());
+        });
+        // 构造结果
+        List<YxsCountvo> ans = new ArrayList<>(list.size());
+        list.forEach(i -> {
+            YxsCountvo t = new YxsCountvo();
+            BeanUtils.copyProperties(i, t);
+            if (map.containsKey(i.getDwh())) {
+                t.setSum(map.get(i.getDwh()));
+            } else {
+                t.setSum("0");
+            }
+            ans.add(t);
+        });
+
+        return Result.succ(ans);
+    }
+
+    @RequiresRoles("ADMIN")
+    @PostMapping("/syscountcourse")
+    public Result sysCountCourse(@RequestBody String json) {
+        // 解析字符串
+        io.jsonwebtoken.lang.Assert.notNull(json, "参数错误");
+        Map<String, String> jsonmap = JSON.parseObject(json, new TypeReference<Map<String, String>>() {});
+            String xnxq = jsonmap.get("xnxq");
+            String yxsh = jsonmap.get("yxsh");
+
+        // 统计功能
+        if (StringUtils.isEmpty(xnxq) || StringUtils.isEmpty(yxsh)) {
+            return Result.fail("参数错误");
+        }
+        // 统计每个实验室
+        // 获取所有的 实验室列表
+        List<WeixinSyszk> list = syszkService.list(new QueryWrapper<WeixinSyszk>().eq("YXSH", yxsh));
+        List<SysCountCourse> sysCountCourseList = sysxkService.getSysCountCourseList(xnxq, yxsh);
+
+        Map<String, String> map = new HashMap<>(sysCountCourseList.size());
+        sysCountCourseList.forEach(i -> {
+            map.put(i.getSysh(), i.getSum());
+        });
+
+        // 构造结果
+        List<SysCountVo> ans = new ArrayList<>(list.size());
+        list.forEach(i -> {
+            SysCountVo t = new SysCountVo();
+            BeanUtils.copyProperties(i, t);
+            if (map.containsKey(i.getSysh())) {
+                t.setSum(map.get(i.getSysh()));
+            } else {
+                t.setSum("0");
+            }
+            ans.add(t);
+        });
+        return Result.succ(ans);
+    }
+
+
 
 }

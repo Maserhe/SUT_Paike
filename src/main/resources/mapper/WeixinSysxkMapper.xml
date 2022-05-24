@@ -2,4 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.day1.mapper.WeixinSysxkMapper">
 
+    <select id="getYxsCountCourseList" resultType="cn.day1.common.vo.countcourse.YxsCountCourse">
+
+        SELECT WEIXIN_YXS.DWH  as dwh, COUNT(*) as sum
+        FROM WEIXIN_YXS, WEIXIN_SYSXK
+        WHERE WEIXIN_SYSXK.XNXQ01ID = #{xnxq} AND WEIXIN_YXS.DWH = WEIXIN_SYSXK.YXSH  GROUP BY DWH
+    </select>
+
+
+    <select id="getSysCountCourseList" resultType="cn.day1.common.vo.countcourse.SysCountCourse">
+
+        SELECT SYSH as sysh, COUNT(*) as sum FROM WEIXIN_SYSXK
+        WHERE WEIXIN_SYSXK.XNXQ01ID = #{xnxq} and WEIXIN_SYSXK.YXSH = #{yxsh} GROUP BY sysh
+
+    </select>
 </mapper>
